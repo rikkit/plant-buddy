@@ -15,6 +15,7 @@
   },
   "dependencies": {
     "chroma-js": "^2.1.0",
+    "geometric": "^2.2.1",
     "phaser": "^3.22.0",
     "react": "^16.13.0",
     "react-dom": "^16.13.0",

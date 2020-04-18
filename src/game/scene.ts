@@ -1,5 +1,6 @@
 import Phaser from "phaser";
 import chroma from "chroma-js";
+import * as geometric from "geometric";
 const Vector2 = Phaser.Math.Vector2;
 
 export default class extends Phaser.Scene {
@@ -94,7 +95,7 @@ class PlantModel {
 
 class LeafModel {
   currentTick: number;
-  poly: Phaser.Geom.Polygon;
+  points: geometric.Polygon;
 
   constructor(
     private scene: Phaser.Scene,
@@ -103,15 +104,13 @@ class LeafModel {
     private originPointIndex: number,
     clockwise: boolean
   ) {
-    const points = [
+    this.points = [
       [0, 0],
       clockwise ? [10, 5] : [-10, 5],
       clockwise ? [20, 0] : [-20, 0],
       clockwise ? [10, -5] : [-10, -5],
       [0, 0]
-    ]
-
-    this.poly = new Phaser.Geom.Polygon(points as any);
+    ];
   }
 
   update(tick: number) {
@@ -119,18 +118,20 @@ class LeafModel {
       return;
     }
     this.currentTick = tick;
+    this.points = geometric.polygonScale(this.points, 1.1, [0,0]);
 
     const leafOrigin = this.stalk.points[this.originPointIndex];
-    fillPolygon(this.gfx, leafOrigin, this.poly);
+    fillPolygon(this.gfx, leafOrigin, this.points);
   }
 }
 
-const fillPolygon = (gfx: Phaser.GameObjects.Graphics, origin: Phaser.Math.Vector2, poly: Phaser.Geom.Polygon) => {
+const fillPolygon = (gfx: Phaser.GameObjects.Graphics, origin: Phaser.Math.Vector2, poly: geometric.Polygon) => {
   gfx.fillStyle(chroma("green").num());
   gfx.beginPath();
   gfx.moveTo(origin.x, origin.y);
-  for (var i = 1; i < poly.points.length; i++) {
-    gfx.lineTo(origin.x + poly.points[i].x, origin.y + poly.points[i].y);
+  for (var i = 1; i < poly.length; i++) {
+    const [x, y] = poly[i]
+    gfx.lineTo(origin.x + x, origin.y + y);
   }
   gfx.closePath();
   gfx.fillPath();
