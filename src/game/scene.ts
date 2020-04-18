@@ -1,6 +1,8 @@
 import Phaser from "phaser";
 
 export default class extends Phaser.Scene {
+  loam: Phaser.GameObjects.Rectangle;  
+
   constructor() {
     super("PlayGame");
   }
@@ -9,27 +11,12 @@ export default class extends Phaser.Scene {
   }
 
   create() {
+    const height = this.game.scale.height / 3;
+    const width = this.game.scale.width;
+    this.loam = this.add.rectangle(width/2, this.game.scale.height - height / 2, width, height, 0xffffff);
+  }
 
-    var graphics = this.add.graphics({ lineStyle: { width: 2, color: 0xaa0000 }, fillStyle: { color: 0x0000aa } });
-
-
-    var rect = new Phaser.Geom.Rectangle();
-
-    var square = new Phaser.Geom.Rectangle();
-
-    this.input.on('pointermove', function (pointer: Phaser.Input.Pointer) {
-      graphics.clear();
-
-      rect.width = pointer.x;
-      rect.height = pointer.y;
-
-      var area = Phaser.Geom.Rectangle.Area(rect);
-
-      square.width = square.height = Math.sqrt(area);
-
-      graphics.fillRectShape(square);
-
-      graphics.strokeRectShape(rect);
-    });
+  update() {
+    this.loam.fillColor = this.loam.fillColor + 0x1;
   }
 };

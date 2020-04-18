@@ -6,6 +6,7 @@ import initGame from "./game/init";
  */
 export const GameManager: React.FC = () => {
   const [time, setTime] = useState(new Date());
+  const [game, setGame] = useState<Phaser.Game>();
 
   const initPhaser = useCallback(initGame, []);
 
@@ -14,8 +15,22 @@ export const GameManager: React.FC = () => {
   }, []);
 
   useEffect(() => {
-    initPhaser();
+    const game = initPhaser();
+    setGame(game);
   }, []);
+
+  useEffect(() => {
+    if (!game) {
+      return;
+    }
+
+    const refreshGameScale = () => {
+      game.scale.refresh()
+    };
+
+    window.addEventListener('resize', refreshGameScale);
+    return () => window.removeEventListener("resize", refreshGameScale);
+  }, [game])
 
   return (
     <div>

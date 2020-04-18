@@ -3,13 +3,18 @@ import scene from "./scene";
 
 export default () => {
 
-  const config = {
+  const config: Phaser.Types.Core.GameConfig = {
     type: Phaser.AUTO,
     parent: "phaser",
-    width: 800,
-    height: 600,
-    scene: scene
+    width: 300,
+    height: 400,
+    scene: scene,
+
+
+    scale: {
+      mode: Phaser.Scale.ScaleModes.FIT,
+    },
   };
 
-  const game = new Phaser.Game(config);
+  return new Phaser.Game(config);
 }
