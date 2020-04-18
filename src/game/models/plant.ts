@@ -58,14 +58,20 @@ class PlantNode {
    * 
    * @param growthPoints 
    */
-  grow(points: number): number {
+  grow(lightPoint: Phaser.Math.Vector2, points: number): number {
     const isTip = this._next == null;
     if (isTip) {
       const length = Phaser.Math.Distance.BetweenPoints(this._parent, this);
       if (length < 50) {
         // Plant axis Y is up!
-        // TODO grow towards the light
-        this._y += (10 * Math.min(Math.max(this.info.growthFactor, 0), 1));
+        const add = new Phaser.Math.Vector2(this)
+          .add(lightPoint)
+          .normalize()
+          .scale(10 * this.info.growthFactor);
+        this._x += add.x;
+        this._y += add.y;
+        console.log(add);
+
         points -= 1 - this.info.growthFactor;
       }
       else {
@@ -123,7 +129,12 @@ export class PlantModel {
     // consider each segment of our curve
     // growth occurs most rapidly at the end, but also there's a slight scale to the whole plant
 
-    this.gfx.clear();
+    // Grow towards the light
+    // TODO day/night cycle, use cursor for now
+    const lightPoint = new Phaser.Math.Vector2(this.scene.input);
+    const lightPointPlant = new Phaser.Math.Vector2(this.seed)
+      .subtract(new Phaser.Math.Vector2(lightPoint))
+      .multiply(new Phaser.Math.Vector2(-1, 1));
 
     // Traverse the tree, growing on the way
     const curve = new Phaser.Curves.Spline();
@@ -134,7 +145,8 @@ export class PlantModel {
     let nodeY = this.seed.y;
     do {
       console.debug(`Growth ${points}`);
-      points = node.grow(points);
+
+      points = node.grow(lightPointPlant, points);
 
       // Node x and y are relative to parent node - translate into screen space for curve
       nodeX += node.x;

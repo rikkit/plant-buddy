@@ -16,6 +16,6 @@ export class LeafModel {
   }
 
   grow(points: number): number {
-    return points - 1;
+    return points;
   }
 }

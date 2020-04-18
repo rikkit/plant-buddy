@@ -21,7 +21,7 @@ export default class extends Phaser.Scene {
     this.plant = new PlantModel(this, this.game.scale.width / 2, 2 * (this.game.scale.height / 3));
 
     this.time.addEvent({
-      delay: 500,
+      delay: 250,
       loop: true,
       callback: () => {
         this.tick += 1;
