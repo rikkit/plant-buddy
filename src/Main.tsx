@@ -1,7 +1,7 @@
 
 import React from "react";
 import ReactDOM from 'react-dom'
-import { Game } from "./Game";
+import { GameManager } from "./GameManager";
 
-ReactDOM.render(<Game /> as any, document.getElementById("root"));
+ReactDOM.render(<GameManager /> as any, document.getElementById("react"));
 
