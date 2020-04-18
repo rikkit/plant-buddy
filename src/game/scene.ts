@@ -25,7 +25,7 @@ export default class extends Phaser.Scene {
       loop: true,
       callback: () => {
         this.tick += 1;
-        console.debug(this.tick);
+        console.debug(`Tick ${this.tick}`);
       }
     });
   }
