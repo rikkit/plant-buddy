@@ -1,0 +1,23 @@
+{
+  "compilerOptions": {
+    "strict": false,
+    "strictNullChecks": false,
+    "target": "es5",
+    "lib": ["DOM", "ES2020"],
+    "allowSyntheticDefaultImports": true,
+    "jsx": "react",
+    "moduleResolution": "node",
+    "importHelpers": true,
+    "module": "es6",
+    "noImplicitAny": true,
+    "preserveConstEnums": true,
+    "rootDir": "src"
+  },
+  "include": [
+    "src/**/*"
+  ],
+  "exclude": [
+    "node_modules",
+    "public"
+  ]
+}
