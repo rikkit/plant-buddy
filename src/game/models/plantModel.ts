@@ -1,95 +1,7 @@
 
 import chroma from "chroma-js";
 import * as geometric from "geometric";
-import { LeafModel } from "./leaf";
-
-
-interface PlantInfo {
-  /**
-   * Inherent growthiness of this plant, 0 - 1
-   */
-  growthFactor: number;
-}
-
-
-class PlantNode {
-  private _parent: PlantNode;
-  private _next: PlantNode;
-
-  get parent() {
-    return this._parent;
-  }
-
-  get next() {
-    return this._next;
-  }
-
-  get x() {
-    return this._x;
-  }
-
-  get y() {
-    return this._y;
-  }
-
-  private constructor(
-    private info: PlantInfo,
-    private _x: number,
-    private _y: number,
-    private leaves: LeafModel[] = [],
-  ) { }
-
-  static New = (info: PlantInfo, x: number, y: number) => {
-    return new PlantNode(info, x, y);
-  }
-
-  addNode(x: number, y: number) {
-    const next = PlantNode.New(this.info, x, y);
-    next._parent = this;
-    this._next = next;
-    return next;
-  }
-
-  addLeaf() {
-    this.leaves.push(new LeafModel());
-  }
-
-  /**
-   * 
-   * @param growthPoints 
-   */
-  grow(lightPoint: Phaser.Math.Vector2, points: number): number {
-    const isTip = this._next == null;
-    if (isTip) {
-      const length = Phaser.Math.Distance.BetweenPoints(this._parent, this);
-      if (length < 50) {
-        // Plant axis Y is up!
-        const add = new Phaser.Math.Vector2(this)
-          .add(lightPoint)
-          .normalize()
-          .scale(10 * this.info.growthFactor);
-        this._x += add.x;
-        this._y += add.y;
-        console.log(add);
-
-        points -= 1 - this.info.growthFactor;
-      }
-      else {
-        // Enough growth here - make a new segment
-        const next = this.addNode(0, 1);
-        next.addLeaf();
-        next.addLeaf();
-      }
-    }
-
-    for (const leaf of this.leaves) {
-      points = leaf.grow(points);
-    }
-
-    return points;
-  }
-}
-
+import { PlantNode } from "./plantNode";
 
 export class PlantModel {
   currentTick: number = 0;
@@ -139,6 +51,8 @@ export class PlantModel {
     // Traverse the tree, growing on the way
     const curve = new Phaser.Curves.Spline();
 
+    this.gfx.clear();
+
     let points = 10; // TODO get from scene, moisture, sun, temp, etc
     let node = this.root;
     let nodeX = this.seed.x;
@@ -153,26 +67,30 @@ export class PlantModel {
       nodeY -= node.y; // Plant-growth axis is flipped!
       curve.addPoint(nodeX, nodeY);
 
+      if (node.leaves.length > 0) {
+        for (let i = 0; i < node.leaves.length; i++) {
+          // TODO this probably only works for 2 leaves - 4 leaves form like >< not \||/
+          const range = 160;
+          const angle = -range + (i * ((range - 180 + range) / (node.leaves.length - 1)));
+          console.debug(`Leaf ${i} ${angle}deg`);
+          rotateVector(node.direction, angle); 
+          const polygon = geometric.polygonRotate(node.leaves[i]._points, angle, [0, 0])
+
+          fillPolygon(this.gfx, { x: nodeX, y: nodeY }, polygon);
+        }
+      }
+
       node = node.next;
     } while (points > 0 && node != null)
 
 
-    this.gfx.clear();
     this.gfx.moveTo(this.root.x, this.root.y);
     this.gfx.lineStyle(2, chroma("green").num(), 0.8);
     curve.draw(this.gfx, 64);
-
-    // for (const leaf of this.leaves) {
-    //   leaf.update(tick);
-    //   this.points = geometric.polygonScale(this.points, 2, [0, 0]);
-
-    //   const leafOrigin = this.stalk.points[this.originPointIndex];
-    //   fillPolygon(this.gfx, leafOrigin, this.points);
-    // }
   }
 }
 
-const fillPolygon = (gfx: Phaser.GameObjects.Graphics, origin: Phaser.Math.Vector2, poly: geometric.Polygon) => {
+const fillPolygon = (gfx: Phaser.GameObjects.Graphics, origin: Phaser.Types.Math.Vector2Like, poly: geometric.Polygon) => {
   gfx.fillStyle(chroma("green").num());
   gfx.beginPath();
   gfx.moveTo(origin.x, origin.y);
@@ -182,4 +100,13 @@ const fillPolygon = (gfx: Phaser.GameObjects.Graphics, origin: Phaser.Math.Vecto
   }
   gfx.closePath();
   gfx.fillPath();
+}
+
+const rotateVector = (vector: Phaser.Types.Math.Vector2Like, angle: number) => {
+  const theta = Phaser.Math.DegToRad(angle);
+
+  const { x, y } = vector;
+  const cs = Math.cos(theta);
+  const sn = Math.sin(theta);
+  return new Phaser.Math.Vector2(x * cs - y * sn, x * sn + y * cs);
 }

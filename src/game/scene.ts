@@ -1,8 +1,6 @@
 import Phaser from "phaser";
 import { SoilModel } from "./models/soil";
-import { PlantModel } from "./models/plant";
-
-const Vector2 = Phaser.Math.Vector2;
+import { PlantModel } from "./models/plantModel";
 
 export default class extends Phaser.Scene {
   loam: SoilModel;
