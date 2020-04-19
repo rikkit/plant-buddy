@@ -1,6 +1,7 @@
 import Phaser, { Data } from "phaser";
 import { SoilModel } from "./models/soil";
 import { PlantModel } from "./models/plantModel";
+import { debug } from "./models/debug";
 
 export const SceneName = "Game";
 export const Data_Tick = "_tick";
@@ -56,6 +57,6 @@ export default class extends Phaser.Scene {
 
     const nextTick = this.data.get(Data_Tick) + 1;
     this.data.set(Data_Tick, nextTick);
-    console.debug(`Tick ${nextTick} (${setTime})`);
+    debug("tick", `${nextTick} (${setTime})`);
   }
 };

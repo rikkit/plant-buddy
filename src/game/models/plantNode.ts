@@ -1,6 +1,10 @@
 import { LeafModel } from "./leafModel";
+import { debug } from "./debug";
+
+let instanceId: number = 1;
 
 export class PlantNode {
+  private readonly id = instanceId++;
   private _parent: PlantNode;
   private _next: PlantNode;
 
@@ -41,7 +45,12 @@ export class PlantNode {
     return new Phaser.Math.Vector2(this);
   }
 
-  addNode(x: number, y: number) {
+  // Plant-growth axis is flipped!
+  inScreenSpace() {
+    return new Phaser.Math.Vector2(this._x, -this.y);
+  }
+
+  addNode = (x: number, y: number) => {
     const next = PlantNode.New(this.species, x, y);
     next._parent = this;
     this._next = next;
@@ -56,35 +65,58 @@ export class PlantNode {
    * 
    * @param growthPoints 
    */
-  grow(lightPoint: Phaser.Math.Vector2, points: number): number {
-    const isTip = this._next == null;
-    if (isTip) {
-      const length = Phaser.Math.Distance.BetweenPoints(this._parent, this);
-      const maxLength = this.species.growthFactor * 100;
-      if (length < maxLength) {
-        // Plant axis Y is up!
-        const add = new Phaser.Math.Vector2(this)
-          .add(lightPoint)
-          .normalize()
-          .scale(10 * this.species.growthFactor);
-        this._x += add.x;
-        this._y += add.y;
-        console.log(add);
+  grow(params: GrowthParams, points: number): number {
+    const { lightPoint, soilDistance } = params;
+    debug("nodes", `${this.id} (next: ${this.next?.id})`);
+    debug("nodes", this.asVector2());
 
-        points -= 1 - this.species.growthFactor;
+    const isTip = this.next == null;
+    debug("nodes", `is tip ${isTip}`);
+    if (isTip) {
+      // If below soil level, grow up
+      if (soilDistance < -1) {
+        const growth = 5 * this.species.growthFactor; // Slower growth beneath ground
+        this._y += growth;
+
+        points -= 3 * (1 / this.species.growthFactor);
+        debug("growth", "grew underground");
       }
       else {
-        // Enough growth here - make a new segment
-        const next = this.addNode(0, 1);
-        next.addLeaf();
-        next.addLeaf();
+        const length = Phaser.Math.Distance.BetweenPoints(this._parent, this);
+        const maxLength = this.species.growthFactor * 100;
+        if (length < maxLength) {
+          // Plant axis Y is up!
+          const add = new Phaser.Math.Vector2(this)
+            .add(lightPoint)
+            .normalize()
+            .scale(10 * this.species.growthFactor);
+          this._x += add.x;
+          this._y += add.y;
+
+          points -= 1 / this.species.growthFactor;
+          debug("growth", "grew tip");
+        }
+        else {
+          // Enough growth here - make a new segment
+          const next = this.addNode(0, 1);
+          next.addLeaf();
+          next.addLeaf();
+          points -= 2 * (1 / this.species.growthFactor);
+          debug("growth", "grew new segment");
+        }
       }
+    }
+    else {
+      this._y += 0.1;
+      points -= ((1 / this.species.growthFactor) / 10);
+      debug("growth", "grew (non-tip)");
     }
 
     for (const leaf of this.leaves) {
       points = leaf.grow(points);
     }
 
+    debug("nodes", this.asVector2());
     return points;
   }
 }
