@@ -1,0 +1,32 @@
+
+.pass {
+  pointer-events: none;
+  user-select: none;
+}
+
+.pal-man {
+  color: white;
+  position: relative;
+
+  &__time {
+    opacity: 0.4;
+    position: absolute;
+    top: 0;
+    left: 0;
+  }
+
+  &__speed {
+    position: absolute;
+    top: 0;
+    right: 0;
+    display: flex;
+    flex-wrap: nowrap;
+
+    button {
+      background: none;
+      font-size: 30px;
+      border: none;
+      cursor: pointer;
+    }
+  }
+}

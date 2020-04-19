@@ -2,13 +2,15 @@ import Phaser from "phaser";
 import { SoilModel } from "./models/soil";
 import { PlantModel } from "./models/plantModel";
 
+export const SceneName = "Game";
+
 export default class extends Phaser.Scene {
   loam: SoilModel;
   plant: PlantModel;
   tick: number = 0;
 
   constructor() {
-    super("PlayGame");
+    super(SceneName);
   }
 
   preload() {
