@@ -15,3 +15,8 @@ body {
   position: absolute;
   top: 0;
 }
+
+.noclip {
+  pointer-events: none;
+  user-select: none;
+}
