@@ -23,6 +23,13 @@
       border: none;
       cursor: pointer;
       pointer-events: all;
+      padding: 0;
+      margin: 5px;
+      vertical-align: middle;
+
+      &:hover, &:active {
+        background: white;
+      }
     }
   }
 }

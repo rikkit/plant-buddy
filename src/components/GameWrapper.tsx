@@ -1,7 +1,9 @@
 import React, { useState, useEffect, useCallback } from "react";
 import initGame from "../game/init";
-import { SceneName } from "../game/scene";
+import { SceneName, Data_Tick, Data_TickMs, GameSpeed } from "../game/scene";
 import "./GameWrapper.scss";
+import { throwIfDefined } from "./utils";
+import { SpeedButton } from "./SpeedButton";
 
 interface GameWrapperProps {
   exitGame: () => void;
@@ -10,6 +12,7 @@ interface GameWrapperProps {
 export const GameWrapper = ({ exitGame }: GameWrapperProps) => {
   const [game, setGame] = useState<Phaser.Game>();
   const [time, setTime] = useState(0);
+  const [gameSpeed, setGameSpeedUI] = useState<GameSpeed>()
   const [isPaused, setIsPaused] = useState(false);
 
   const pauseGame = useCallback(() => game.scene.pause(SceneName), [game]);
@@ -26,12 +29,19 @@ export const GameWrapper = ({ exitGame }: GameWrapperProps) => {
   // Sync React UI with game state
   useEffect(() => {
     const handle = setInterval(() => {
-      setTime(game?.getTime() ?? 0);
+      const scene = game.scene.getScene(SceneName);
+      const [currentTick, speed] = scene.data.get([Data_Tick, Data_TickMs]);
 
-      const isScenePaused = game.scene.isPaused(SceneName);
-      setIsPaused(isScenePaused);
+      setTime(currentTick ?? 0);
+      setGameSpeedUI(speed);
+      setIsPaused(scene.time.paused);
     }, 100);
     return () => clearInterval(handle);
+  }, [game]);
+
+  const setGameSpeed = useCallback((newSpeed: GameSpeed) => {
+    const scene = game.scene.getScene(SceneName);
+    scene.data.set(Data_TickMs, newSpeed);
   }, [game]);
 
   useEffect(() => {
@@ -52,13 +62,13 @@ export const GameWrapper = ({ exitGame }: GameWrapperProps) => {
       <div className="pal-game__time noclip">
         {time}
       </div>
-      <div className="pal-game__speed noclip">
+      <div className="pal-game__speed">
         <button onClick={exitGame}>🔙</button>
         {isPaused
           ? <button onClick={playGame}>▶️</button>
           : <button onClick={pauseGame}>⏸️</button>
         }
-        <button>⏩</button>
+        <SpeedButton speed={gameSpeed} setSpeed={setGameSpeed} />
       </div>
 
       <div id="phaser"></div>
