@@ -13,7 +13,10 @@ export const GameManager: React.FC = () => {
       {!inGame && (
         <div className="pal-man__menu">
           <h1>Plant Pal!</h1>
-          <button onClick={() => setInGame(true)}>Start</button>
+          <p>#LudumDare46 - Keep it Alive</p>
+          <button className="game-button pal-man__start" onClick={() => setInGame(true)}>
+            Start game
+          </button>
         </div>
       )}
 

@@ -1,9 +1,9 @@
 import React, { useState, useEffect, useCallback } from "react";
 import initGame from "../game/init";
 import { SceneName, Data_Tick, Data_TickMs, GameSpeed } from "../game/scene";
-import "./GameWrapper.scss";
-import { throwIfDefined } from "./utils";
 import { SpeedButton } from "./SpeedButton";
+import { GameTime } from "./GameTime";
+import "./GameWrapper.scss";
 
 interface GameWrapperProps {
   exitGame: () => void;
@@ -11,7 +11,7 @@ interface GameWrapperProps {
 
 export const GameWrapper = ({ exitGame }: GameWrapperProps) => {
   const [game, setGame] = useState<Phaser.Game>();
-  const [time, setTime] = useState(0);
+  const [tick, setTick] = useState(0);
   const [gameSpeed, setGameSpeedUI] = useState<GameSpeed>()
   const [isPaused, setIsPaused] = useState(false);
 
@@ -32,9 +32,9 @@ export const GameWrapper = ({ exitGame }: GameWrapperProps) => {
       const scene = game.scene.getScene(SceneName);
       const [currentTick, speed] = scene.data.get([Data_Tick, Data_TickMs]);
 
-      setTime(currentTick ?? 0);
+      setTick(currentTick ?? 0);
       setGameSpeedUI(speed);
-      setIsPaused(scene.time.paused);
+      setIsPaused(game.scene.isPaused(SceneName)); // N.B. When pausing scene.time.paused isn't updated
     }, 100);
     return () => clearInterval(handle);
   }, [game]);
@@ -59,14 +59,12 @@ export const GameWrapper = ({ exitGame }: GameWrapperProps) => {
 
   return (
     <div className="pal-game">
-      <div className="pal-game__time noclip">
-        {time}
-      </div>
+      <GameTime tick={tick} />
       <div className="pal-game__speed">
-        <button onClick={exitGame}>🔙</button>
+        <button className="game-button" onClick={exitGame}>🔙</button>
         {isPaused
-          ? <button onClick={playGame}>▶️</button>
-          : <button onClick={pauseGame}>⏸️</button>
+          ? <button className="game-button" onClick={playGame}>▶️</button>
+          : <button className="game-button" onClick={pauseGame}>⏸️</button>
         }
         <SpeedButton speed={gameSpeed} setSpeed={setGameSpeed} />
       </div>

@@ -38,7 +38,7 @@ export const SpeedButton = ({ speed, setSpeed }: SpeedButtonProps) => {
   const onClick = useCallback(() => setSpeed(nextSpeed), [speed]);
 
   return (
-    <button className="speed-button" onClick={onClick}>
+    <button className="speed-button game-button" onClick={onClick}>
       ⏩<span className="speed-button__label">{label}</span>
     </button>
   )

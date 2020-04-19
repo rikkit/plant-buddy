@@ -3,8 +3,7 @@
   color: white;
   position: relative;
 
-  &__time {
-    opacity: 0.4;
+  .pal-time {
     position: absolute;
     top: 0;
     left: 0;
@@ -16,20 +15,5 @@
     right: 0;
     display: flex;
     flex-wrap: nowrap;
-
-    button {
-      background: none;
-      font-size: 30px;
-      border: none;
-      cursor: pointer;
-      pointer-events: all;
-      padding: 0;
-      margin: 5px;
-      vertical-align: middle;
-
-      &:hover, &:active {
-        background: white;
-      }
-    }
   }
 }
