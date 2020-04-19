@@ -23,9 +23,6 @@
     "tslib": "^1.11.1"
   },
   "scripts": {
-    "build": "rollup -c",
-    "watch": "rollup -c -w",
-    "dev": "npm-run-all --parallel start watch",
-    "start": "rollup -c; serve public"
+    "start": "parcel serve src/index.html"
   }
 }
