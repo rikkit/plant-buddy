@@ -83,7 +83,7 @@ export class PlantNode {
       }
       else {
         const length = Phaser.Math.Distance.BetweenPoints(this._parent, this);
-        const maxLength = this.species.growthFactor * 100;
+        const maxLength = this.species.growthFactor * 75;
         if (length < maxLength) {
           // Plant axis Y is up!
           const add = new Phaser.Math.Vector2(this)
@@ -107,7 +107,7 @@ export class PlantNode {
       }
     }
     else {
-      this._y += 0.1;
+      this._y += 0.02;
       points -= ((1 / this.species.growthFactor) / 10);
       debug("growth", "grew (non-tip)");
     }
