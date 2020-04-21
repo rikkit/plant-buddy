@@ -82,7 +82,7 @@ export class PlantNode {
         debug("growth", "grew underground");
       }
       else {
-        const length = Phaser.Math.Distance.BetweenPoints(this._parent, this);
+        const length = this.asVector2().length();
         const maxLength = this.species.growthFactor * 75;
         if (length < maxLength) {
           // Plant axis Y is up!
