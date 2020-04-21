@@ -1,0 +1,19 @@
+
+.pal-game {
+  color: white;
+  position: relative;
+
+  .pal-time {
+    position: absolute;
+    top: 0;
+    left: 0;
+  }
+
+  &__speed {
+    position: absolute;
+    top: 0;
+    right: 0;
+    display: flex;
+    flex-wrap: nowrap;
+  }
+}

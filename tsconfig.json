@@ -11,7 +11,8 @@
     "module": "es6",
     "noImplicitAny": true,
     "preserveConstEnums": true,
-    "rootDir": "src"
+    "rootDir": "src",
+    "sourceMap": true,
   },
   "include": [
     "src/**/*"
