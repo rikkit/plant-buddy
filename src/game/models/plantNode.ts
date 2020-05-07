@@ -75,25 +75,25 @@ export class PlantNode {
     if (isTip) {
       // If below soil level, grow up
       if (soilDistance < -1) {
-        const growth = 5 * this.species.growthFactor; // Slower growth beneath ground
+        const growth = 5 * this.species.growth; // Slower growth beneath ground
         this._y += growth;
 
-        points -= 3 * (1 / this.species.growthFactor);
+        points -= 3 * (1 / this.species.growth);
         debug("growth", "grew underground");
       }
       else {
         const length = this.asVector2().length();
-        const maxLength = this.species.growthFactor * 75;
+        const maxLength = (1 / this.species.nodeDensity) * 100;
         if (length < maxLength) {
           // Plant axis Y is up!
           const add = new Phaser.Math.Vector2(this)
             .add(lightPoint)
             .normalize()
-            .scale(10 * this.species.growthFactor);
+            .scale(10 * this.species.growth);
           this._x += add.x;
           this._y += add.y;
 
-          points -= 1 / this.species.growthFactor;
+          points -= 1 / this.species.growth;
           debug("growth", "grew tip");
         }
         else {
@@ -101,14 +101,14 @@ export class PlantNode {
           const next = this.addNode(0, 1);
           next.addLeaf();
           next.addLeaf();
-          points -= 2 * (1 / this.species.growthFactor);
+          points -= 2 * (1 / this.species.growth);
           debug("growth", "grew new segment");
         }
       }
     }
     else {
       this._y += 0.02;
-      points -= ((1 / this.species.growthFactor) / 10);
+      points -= ((1 / this.species.growth) / 10);
       debug("growth", "grew (non-tip)");
     }
 

@@ -15,7 +15,9 @@ export class PlantModel {
   constructor(private scene: Phaser.Scene, x: number, y: number) {
 
     this.plantInfo = {
-      growthFactor: 0.5,
+      growth: 0.5,
+      leafGrowth: 0.5,
+      nodeDensity: 0.1,
       seedDepth: 30,
     };
 

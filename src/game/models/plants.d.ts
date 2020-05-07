@@ -1,10 +1,21 @@
 
 
 interface PlantInfo {
+
   /**
-   * Inherent growthiness of this plant, 0 - 1
+   * Inherent growthiness of the plant 0 -1
    */
-  growthFactor: number;
+  growth: number;
+
+  /**
+   * Density of nodes 0 - 1
+   */
+  nodeDensity: number;
+
+  /**
+   * Growth factor for leaves 0 - 1
+   */
+  leafGrowth: number;
 
   /**
    * Planting depth of the seed
